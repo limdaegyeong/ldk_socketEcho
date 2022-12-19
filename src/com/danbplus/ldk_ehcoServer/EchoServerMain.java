@@ -1,4 +1,4 @@
-package ldk_ehcoServer;
+package com.danbplus.ldk_ehcoServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,9 +17,9 @@ public class EchoServerMain {
 	 
     public static final int PORT = 6077;
  
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
  
-        ServerSocket serverSocket = null;
+        ServerSocket serverSocket = null; 
  
         InputStream is = null;
         InputStreamReader isr = null;
@@ -39,7 +39,7 @@ public class EchoServerMain {
             InetAddress inetAddress = InetAddress.getLocalHost();
             String localhost = inetAddress.getHostAddress();
  
-            serverSocket.bind(new InetSocketAddress(localhost, PORT));
+            serverSocket.bind(new InetSocketAddress(localhost, PORT)); //로컬호스트와 포트번호로 바인딩함
  
             System.out.println("[server] binding " + localhost);
  
@@ -95,7 +95,20 @@ public class EchoServerMain {
             }
  
             sc.close();
- 
+            
+    		try {
+    			// close하기 전에 객체가 존재하는지 확인한다.
+    			if(is != null) is.close();
+    			if(isr != null) isr.close();
+    			if(br != null) br.close();
+    			if(os != null) os.close();
+    			if(osw != null) osw.close();
+    			if(pw != null) pw.close();
+    			System.out.println("EchoServer 종료");
+    		} catch (Exception e2) {
+    			
+    		}
+            
         }
  
     }
