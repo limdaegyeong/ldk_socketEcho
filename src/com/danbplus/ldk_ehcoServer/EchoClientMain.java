@@ -1,6 +1,7 @@
 package com.danbplus.ldk_ehcoServer;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Properties;
 import java.util.Scanner;
 
 
@@ -19,7 +21,6 @@ public class EchoClientMain {
 	 
     public static void main(String[] args) throws Exception {
     	
-    	PropertiesEx propertiesEx;
     	
         // 클라이언트 소켓 생성
  
@@ -34,13 +35,23 @@ public class EchoClientMain {
         OutputStreamWriter osw = null;
         PrintWriter pw = null;
  
-        // new InetSocketAddress(InetAddress.getLocalHost() 6077
+        // new InetSocketAddress(InetAddress.getLocalHost() 6011
         
-        int port;
-        port = Integer.parseInt(PropertiesEx.main(args).getProperty("port"));
+        Properties pro= new Properties();
         
         try {
-            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), port));
+        	pro.load(new FileInputStream("C:\\workspace_ldk\\ldk_ehcoServer\\config\\test.properties"));
+        } catch (IOException e) {
+        	System.out.println("파일 불러오기 오류 -> " + e);
+        }
+        
+        String ip= pro.getProperty("echo_ip"); // 대소문자 구분
+        System.out.println("client echo_ip  : " + ip);
+        int port= Integer.parseInt((pro.getProperty("echo_port"))); // 대소문자 구분
+        System.out.println("client echo_port  : " + port);
+        
+        try {
+            socket.connect(new InetSocketAddress(ip, port));
             System.out.println("[client] connected with server");
  
             while (true) {
@@ -91,6 +102,7 @@ public class EchoClientMain {
     			if(os != null) os.close();
     			if(osw != null) osw.close();
     			if(pw != null) pw.close();
+    			if(pro != null)pro.clone();
     			System.out.println("EchoClient 종료");
     		} catch (Exception e2) {
     			
